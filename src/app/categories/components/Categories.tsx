@@ -15,7 +15,7 @@ export default function Categories() {
         setFetchedCategories(false);
 
         const response = await axios
-            .get("/api/categories");
+            .get("/api/v1/categories");
 
         if (response.data.ok)
             setCategories(response.data.data);

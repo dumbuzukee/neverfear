@@ -15,7 +15,7 @@ export default function Products({ categoryId }: { categoryId: string }) {
         setFetchedProducts(false);
 
         const response = await axios
-            .get(`/api/categories/${categoryId}`);
+            .get(`/api/v1/categories/${categoryId}`);
 
         if (response.data.ok)
             setProducts(response.data.data);
