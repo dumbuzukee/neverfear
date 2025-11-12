@@ -27,9 +27,9 @@ export async function POST(request: Request) {
             name: string;
             description?: string;
             image: string;
-            recommended?: boolean;
+            recommended: boolean;
             price: number;
-            stockType: "account" | "key-code";
+            stockType: "account" | "keycode";
             categoryId: string;
         } = await request.json();
 
