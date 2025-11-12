@@ -31,7 +31,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     };
 
     const logout = async () => {
-        await axios.post("/api/users/logout");
+        await axios.post("/api/v1/users/logout");
         setUser(null);
         window.location.href = "/";
     };
