@@ -25,6 +25,8 @@ export async function POST(request: Request) {
             turnstileToken: string;
         } = await request.json();
 
+        /*
+
         if (!turnstileToken) {
             return Response.json({
                 ok: false,
@@ -40,6 +42,8 @@ export async function POST(request: Request) {
                 message: validatedTurnstile.message,
             });
         };
+
+        */
 
         const redeemedGiftVoucher = await redeemGiftVoucher(voucherCode);
 
