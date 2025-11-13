@@ -12,8 +12,6 @@ export default function UsersTable() {
     const [users, setUsers] = useState<any[]>([]);
     const [fetchedUsers, setFetchedUsers] = useState(false);
 
-    const [openedEditModal, { open: OpenEditModal, close: CloseEditModal }] = useDisclosure(false);
-
     const fetchUsers = async () => {
         setFetchedUsers(false);
 
@@ -33,9 +31,6 @@ export default function UsersTable() {
     const rows = users.map((user) => (
         <UserTable
             key={user._id}
-            opened={openedEditModal}
-            open={OpenEditModal}
-            close={CloseEditModal}
             user={user}
         />
     ));
