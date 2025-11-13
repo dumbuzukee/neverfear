@@ -86,15 +86,6 @@ export async function POST(request: Request) {
             });
         };
 
-        const topup = await TopupService
-            .create({
-                userId: user._id,
-                ownerName,
-                amount,
-                voucherCode,
-                status: "success",
-            });
-
         return Response.json({
             ok: true,
             message: "Topped-up successfully",
