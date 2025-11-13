@@ -5,6 +5,7 @@ export const redeemGiftVoucher = async (voucherCode: string) => {
     let match = (parts[1] || parts[0]).match(/[0-9A-Za-z]+/);
 
     const voucher = match ? match[0] : null;
+    const phone = (process.env.PHONE! + "").trim();
 
     if (voucher?.length !== 35) {
         return {
@@ -17,7 +18,7 @@ export const redeemGiftVoucher = async (voucherCode: string) => {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
-            mobile: process.env.PHONE!,
+            mobile: phone,
             voucher_code: voucher,
         }),
     }).then((res) => res.json());
