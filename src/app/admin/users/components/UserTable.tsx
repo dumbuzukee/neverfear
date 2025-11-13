@@ -1,21 +1,24 @@
 
 import { ActionIcon, Badge, Group, NumberFormatter, TableTd, TableTr, Text } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
 import EditUserModal from "./EditModal";
 import { IconPencil, IconTrash } from "@tabler/icons-react";
 
-export default function UserTable({ opened, open, close, user }: { opened: boolean, open: () => void, close: () => void, user: any }) {
+export default function UserTable({ user }: { user: any }) {
     const roleColors: Record<string, string> = {
         dev: "orange",
         admin: "violet",
         user: "violet",
         guest: "gray",
     };
+
+    const [openedEditModal, { open: openEditModal, close: closeEditModal }] = useDisclosure(false);
     
     return (
         <>
         <EditUserModal
-            opened={opened}
-            close={close}
+            opened={openedEditModal}
+            close={closeEditModal}
             user={user}
         />
         <TableTr>
@@ -39,7 +42,7 @@ export default function UserTable({ opened, open, close, user }: { opened: boole
             </TableTd>
             <TableTd>
                 <Group>
-                    <ActionIcon color="gray" variant="subtle" onClick={open}>
+                    <ActionIcon color="gray" variant="subtle" onClick={openEditModal}>
                         <IconPencil size={16} stroke={1.5} />
                     </ActionIcon>
                     <ActionIcon color="red" variant="subtle">
