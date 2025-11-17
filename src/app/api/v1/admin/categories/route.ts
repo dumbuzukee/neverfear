@@ -6,6 +6,7 @@ interface RequestProps {
     description?: string;
     image: string;
     recommended?: boolean;
+    status: "active" | "inactive";
 };
 
 export async function POST(request: Request) {
@@ -21,7 +22,7 @@ export async function POST(request: Request) {
             });
         };
 
-        const { name, description, image, recommended }: RequestProps = await request.json();
+        const { name, description, image, recommended, status }: RequestProps = await request.json();
 
         if (
             !name ||
@@ -39,6 +40,7 @@ export async function POST(request: Request) {
                 description,
                 image,
                 recommended,
+                status
             });
 
         if (!category) {
