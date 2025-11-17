@@ -3,7 +3,7 @@ import { getAuth } from "@/lib/auth";
 export async function GET() {
     try {
         const auth = await getAuth({
-            withAdminRole: true,
+            withAdminRole: false,
         });
 
         if (!auth.success) {
