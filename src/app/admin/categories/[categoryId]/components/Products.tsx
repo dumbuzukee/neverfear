@@ -35,7 +35,7 @@ export default function Products({ categoryId }: { categoryId: string }) {
     ));
 
     return (
-        <Container size="lg" my="xl">
+        <Container size="xl" my="xl">
             {fetchedProducts
                 ? (
                     <SimpleGrid cols={{ base: 1, sm: 2, md: 4 }}>

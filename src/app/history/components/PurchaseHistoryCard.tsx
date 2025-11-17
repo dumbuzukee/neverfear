@@ -1,4 +1,5 @@
-import { Card, CopyButton, Group, Stack, Text, Textarea } from "@mantine/core";
+import { Card, CopyButton, Divider, Group, Stack, Text, Textarea } from "@mantine/core";
+import { IconFileInfo } from "@tabler/icons-react";
 
 
 export default function PurchaseHistoryCard({ purchase }: { purchase: any }) {
@@ -13,18 +14,19 @@ export default function PurchaseHistoryCard({ purchase }: { purchase: any }) {
         >
             <Stack gap="xs">
                 <Group justify="space-between">
-                    <Text fz="md" fw={700}>
+                    <Text fz="sm" fw={700}>
                         {purchase.productName}
                     </Text>
-                    <Text fz="md" fw={500}>
-                        {purchase.productTotalAmount}฿
+                    <Text fz="sm" fw={400}>
+                        {purchase.productTotalAmount} Baht
                     </Text>
                 </Group>
                 <Textarea
-                    label="Here is your item(s):"
+                    leftSection={<IconFileInfo size={16} stroke={1.5} />}
+                    label="Item Info"
+                    description="Here is your item(s) info"
                     value={purchase.productValue.join("\n")}
                     radius="md"
-                    variant="filled"
                     autosize
                     minRows={purchase.productValue.length}
                     maxRows={purchase.productValue.length}

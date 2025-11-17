@@ -35,7 +35,7 @@ export default function Categories() {
     ));
 
     return (
-        <Container size="lg" my="xl">
+        <Container size="xl" my="md">
             {fetchedCategories
                 ? (
                     <SimpleGrid cols={{ base: 1, sm: 3 }}>

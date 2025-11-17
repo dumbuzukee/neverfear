@@ -12,7 +12,7 @@ export default function Header({ opened, toggle }: { opened: boolean, toggle: ()
 
     if (loaded) {
         return (
-            <Container size="lg" className={classes.header}>
+            <Container size="xl" className={classes.header}>
                 <Group gap={24}>
                     <a href="/" className={classes.logo}>
                         NEVERFEAR

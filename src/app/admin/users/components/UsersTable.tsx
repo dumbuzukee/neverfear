@@ -1,16 +1,18 @@
 "use client";
 
-import { ActionIcon, Badge, Container, Group, Notification, NumberFormatter, Table, TableScrollContainer, TableTbody, TableTd, TableTh, TableThead, TableTr, Text } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
-import { IconPencil, IconTrash } from "@tabler/icons-react";
-import axios from "axios";
+import { Container, Notification, Table, TableScrollContainer, TableTbody, TableTh, TableThead, TableTr, TextInput } from "@mantine/core";
 import { useEffect, useState } from "react";
-import EditUserModal from "./EditModal";
+
 import UserTable from "./UserTable";
+
+import axios from "axios";
+import { IconSearch } from "@tabler/icons-react";
 
 export default function UsersTable() {
     const [users, setUsers] = useState<any[]>([]);
     const [fetchedUsers, setFetchedUsers] = useState(false);
+
+    const [search, setSearch] = useState<string>("");
 
     const fetchUsers = async () => {
         setFetchedUsers(false);
@@ -22,6 +24,11 @@ export default function UsersTable() {
             setUsers(response.data.data);
 
         setFetchedUsers(true);
+    };
+
+    const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const { value } = event.currentTarget;
+        setSearch(value);
     };
 
     useEffect(() => {
@@ -36,19 +43,9 @@ export default function UsersTable() {
     ));
 
     return (
-        <Container size="lg" my="xl">
-            {!fetchedUsers
+        <Container size="xl" my="xl">
+            {fetchedUsers
                 ? (
-                    <Notification
-                        title="Loading Data!"
-                        loading
-                        withBorder
-                        withCloseButton={false}
-                    >
-                        Fetching users...
-                    </Notification>
-                )
-                : (
                     <TableScrollContainer minWidth={800}>
                         <Table verticalSpacing="sm">
                             <TableThead>
@@ -57,7 +54,8 @@ export default function UsersTable() {
                                     <TableTh>Email</TableTh>
                                     <TableTh>Role</TableTh>
                                     <TableTh>Balance</TableTh>
-                                    <TableTh />
+                                    <TableTh>Total Balance</TableTh>
+                                    <TableTh>Actions</TableTh>
                                 </TableTr>
                             </TableThead>
                             <TableTbody>
@@ -65,6 +63,16 @@ export default function UsersTable() {
                             </TableTbody>
                         </Table>
                     </TableScrollContainer>
+                )
+                : (
+                    <Notification
+                        title="Loading Data!"
+                        loading
+                        withBorder
+                        withCloseButton={false}
+                    >
+                        Fetching users...
+                    </Notification>
                 )
             }
         </Container>

@@ -1,13 +1,20 @@
 "use client";
 
-import { Button, Checkbox, Modal, NumberInput, Select, Stack, Textarea, TextInput } from "@mantine/core";
+import { Button, Chip, Group, Modal, NumberInput, Select, Stack, Textarea, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
 import { useState } from "react";
+import { IconCheck, IconFileDescription, IconPencil, IconPhoto, IconReceipt, IconSettings } from "@tabler/icons-react";
 
 import axios from "axios";
 
-export default function CreateProductModal({ opened, close, categoryId }: { opened: boolean, close: () => void, categoryId: string }) {
+interface CreateProductModalProps {
+    opened: boolean;
+    close: () => void;
+    categoryId: string;
+};
+
+export default function CreateProductModal({ opened, close, categoryId }: CreateProductModalProps) {
     const form = useForm({
         initialValues: {
             name: "",
@@ -15,7 +22,8 @@ export default function CreateProductModal({ opened, close, categoryId }: { open
             image: "",
             recommended: false,
             price: 100,
-            stockType: "keycode",
+            stockType: "redemption-code",
+            status: "active",
         },
     });
 
@@ -30,6 +38,7 @@ export default function CreateProductModal({ opened, close, categoryId }: { open
                 recommended,
                 price,
                 stockType,
+                status,
             } = values;
 
             setCreating(true);
@@ -42,6 +51,7 @@ export default function CreateProductModal({ opened, close, categoryId }: { open
                     recommended,
                     price,
                     stockType,
+                    status,
                     categoryId,
                 });
 
@@ -51,7 +61,9 @@ export default function CreateProductModal({ opened, close, categoryId }: { open
                     color: "green",
                     autoClose: 3000,
                 });
-                window.location.reload();
+                setTimeout(() => {
+                    window.location.reload();
+                }, 2000);
             } else {
                 notifications.show({
                     message: response.data.message,
@@ -78,14 +90,18 @@ export default function CreateProductModal({ opened, close, categoryId }: { open
                 <Stack>
                     <TextInput
                         required
+                        leftSection={<IconPencil size={16} stroke={1.5} />}
                         label="Product Name"
-                        placeholder="Enter your product name"
+                        description="Enter your product name"
+                        placeholder="Example Product..."
                         radius="md"
                         {...form.getInputProps("name")}
                     />
                     <Textarea
+                        leftSection={<IconFileDescription size={16} stroke={1.5} />}
                         label="Product Description"
-                        placeholder="Enter your product description"
+                        description="Enter your product description"
+                        placeholder="Product Description..."
                         radius="md"
                         autosize
                         minRows={6}
@@ -94,34 +110,56 @@ export default function CreateProductModal({ opened, close, categoryId }: { open
                     />
                     <TextInput
                         required
+                        leftSection={<IconPhoto size={16} stroke={1.5} />}
                         label="Product Image"
-                        placeholder="Enter your product image"
+                        description="Enter your product image URL"
+                        placeholder="https://..."
                         radius="md"
                         {...form.getInputProps("image")}
                     />
-                    <Checkbox
-                        label="Product Recommended"
-                        radius="md"
-                        {...form.getInputProps("recommended")}
-                    />
                     <NumberInput
                         required
+                        leftSection={<IconReceipt size={16} stroke={1.5} />}
                         label="Product Price"
-                        placeholder="Enter your product price"
+                        description="Enter your product price"
+                        placeholder="5-5000"
+                        min={5}
+                        max={5000}
                         radius="md"
                         {...form.getInputProps("price")}
                     />
                     <Select
                         required
+                        leftSection={<IconSettings size={16} stroke={1.5} />}
                         label="Product Type"
-                        placeholder="Select a product type"
-                        radius="md"
+                        description="Select a product's type"
                         data={[
-                            { value: "account", label: "Account" },
-                            { value: "keycode", label: "KeyCode" },
+                            { label: "🔑 Redemption Code", value: "redemption-code" },
+                            { label: "🏷️ Game Account", value: "account" },
+                            { label: "📦 Mystery Box", value: "mystery-box" }
                         ]}
+                        radius="md"
                         {...form.getInputProps("stockType")}
                     />
+                    <Group>
+                        <Chip
+                            icon={<IconCheck  size={16} stroke={1.5} />}
+                            variant="light"
+                            checked={form.values.recommended}
+                            onChange={() => form.setFieldValue("recommended", !form.values.recommended)}
+                        >
+                            Recommended
+                        </Chip>
+                        <Chip
+                            icon={<IconCheck size={16} stroke={1.5} />}
+                            color="green"
+                            variant="light"
+                            checked={form.values.status === "active"}
+                            onChange={() => form.setFieldValue("status", (form.values.status === "active") ? "inactive" : "active")}
+                        >
+                            Active
+                        </Chip>
+                    </Group>
                     <Button
                         type="submit"
                         radius="md"

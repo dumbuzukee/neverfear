@@ -7,7 +7,7 @@ export interface PurchaseDocument extends Document {
     productPrice: number;
     productQuantity: number;
     productTotalAmount: number;
-    productType: "account" | "keycode";
+    productType: "account" | "redemption-code" | "mystery-box";
     productValue: string[];
     createdAt: Date;
 };
@@ -19,7 +19,7 @@ export interface PurchaseInsert {
     productPrice: number;
     productQuantity: number;
     productTotalAmount: number;
-    productType: "account" | "keycode";
+    productType: "account" | "redemption-code" | "mystery-box";
     productValue?: string[];
 };
 
@@ -53,7 +53,7 @@ const PurchaseSchema = new Schema<PurchaseDocument>(
         },
         productType: {
             type: String,
-            enum: ["account", "keycode"],
+            enum: ["account", "redemption-code", "mystery-box"],
             required: true,
         },
         productValue: {

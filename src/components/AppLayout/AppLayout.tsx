@@ -3,6 +3,7 @@
 import { AppShell, AppShellHeader, AppShellMain, AppShellNavbar } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 
+import Footer from "../Footer/Footer";
 import Header from "../Header/Header";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
@@ -12,7 +13,6 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         <AppShell
             header={{ height: 60 }}
             navbar={{ width: 300, breakpoint: "sm", collapsed: { desktop: true, mobile: !opened } }}
-            padding="md"
             withBorder={false}
         >
             <AppShellHeader>
@@ -23,6 +23,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
             </AppShellHeader>
             <AppShellMain>
                 {children}
+                <Footer />
             </AppShellMain>
         </AppShell>
     );

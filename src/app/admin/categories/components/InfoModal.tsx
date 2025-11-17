@@ -1,13 +1,20 @@
 "use client";
 
-import { Modal, NumberInput, Stack, Textarea, TextInput } from "@mantine/core";
+import { Badge, Group, Modal, NumberInput, Stack, Text, Textarea, TextInput } from "@mantine/core";
+import { IconFileDescription, IconId, IconPencil, IconPhoto } from "@tabler/icons-react";
 
-export default function CategoryInfoModal({ opened, close, category }: { opened: boolean, close: () => void, category: any }) {   
+interface CategoryInfoModalProps {
+    opened: boolean;
+    close: () => void;
+    category: any;
+};
+
+export default function CategoryInfoModal({ opened, close, category }: CategoryInfoModalProps) {   
     return (
         <>
         <Modal
             title="Category Info"
-            size="lg"
+            size="md"
             radius="md"
             shadow="sm"
             opened={opened}
@@ -16,7 +23,9 @@ export default function CategoryInfoModal({ opened, close, category }: { opened:
         >
             <Stack>
                 <TextInput
+                    leftSection={<IconId size={16} stroke={1.5} />}
                     label="Category Identifier"
+                    description="Here is a category-id"
                     placeholder={category._id}
                     value={category._id}
                     radius="md"
@@ -24,7 +33,9 @@ export default function CategoryInfoModal({ opened, close, category }: { opened:
                     readOnly
                 />
                 <TextInput
+                    leftSection={<IconPencil size={16} stroke={1.5} />}
                     label="Category Name"
+                    description="Here is a category name"
                     placeholder={category.name}
                     value={category.name}
                     radius="md"
@@ -32,7 +43,9 @@ export default function CategoryInfoModal({ opened, close, category }: { opened:
                     readOnly
                 />
                 <Textarea
+                    leftSection={<IconFileDescription size={16} stroke={1.5} />}
                     label="Category Description"
+                    description="Here is a category description"
                     placeholder={category.description}
                     value={category.description}
                     radius="md"
@@ -43,37 +56,39 @@ export default function CategoryInfoModal({ opened, close, category }: { opened:
                     readOnly
                 />
                 <TextInput
+                    leftSection={<IconPhoto size={16} stroke={1.5} />}
                     label="Category Image"
+                    description="Here is a category image URL"
                     placeholder={category.image}
                     value={category.image}
                     radius="md"
                     variant="filled"
                     readOnly
                 />
-                <TextInput
-                    label="Category Recommended"
-                    placeholder={category.recommended ? "Recommended" : "Not Recommended"}
-                    value={category.recommended ? "Recommended" : "Not Recommended"}
-                    radius="md"
-                    variant="filled"
-                    readOnly
-                />
-                <NumberInput
-                    label="Category Products"
-                    placeholder={category.products}
-                    value={category.products}
-                    radius="md"
-                    variant="filled"
-                    readOnly
-                />
-                <TextInput
-                    label="Category Status"
-                    placeholder={category.status === "active" ? "Active" : "Inactive"}
-                    value={category.status === "active" ? "Active" : "Inactive"}
-                    radius="md"
-                    variant="filled"
-                    readOnly
-                />
+                <Group justify="space-between">
+                    <Text fz="sm" fw={500}>
+                        Category Recommended
+                    </Text>
+                    <Badge color={(category.recommended) ? "violet" : "gray"} variant="light">
+                        Recommended
+                    </Badge>
+                </Group>
+                <Group justify="space-between">
+                    <Text fz="sm" fw={500}>
+                        Category Products
+                    </Text>
+                    <Badge variant="light">
+                        {category.products}
+                    </Badge>
+                </Group>
+                <Group justify="space-between">
+                    <Text fz="sm" fw={500}>
+                        Category Status
+                    </Text>
+                    <Badge color={(category.status === "active") ? "violet" : "gray"} variant="light">
+                        {category.status}
+                    </Badge>
+                </Group>
             </Stack>
         </Modal>
         </>

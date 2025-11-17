@@ -2,9 +2,23 @@ import { getAuth } from "@/lib/auth";
 import { CategoryService } from "@/services/categories.service";
 import { ProductService } from "@/services/products.service";
 
+interface ParamsProps {
+    productId: string;
+};
+
+interface UpdateProps {
+    name: string;
+    description: string;
+    image: string;
+    recommended: boolean;
+    price: number;
+    stockValues: string[];
+    status: "active" | "inactive";
+};
+
 export async function DELETE(
     request: Request,
-    { params }: { params: Promise<{ productId: string }> }
+    { params }: { params: Promise<ParamsProps> }
 ) {
     try {
         const auth = await getAuth({
@@ -27,16 +41,6 @@ export async function DELETE(
             return Response.json({
                 ok: false,
                 message: "Product not found",
-            });
-        };
-
-        const category = await CategoryService
-            .getById(product.categoryId);
-
-        if (!category) {
-            return Response.json({
-                ok: false,
-                message: "Category not found",
             });
         };
 
@@ -51,7 +55,7 @@ export async function DELETE(
         };
 
         const products = await ProductService
-            .getAll(product.categoryId, true);
+            .getAll(product.categoryId);
 
         const updatedCategory = await CategoryService
             .update(product.categoryId, {
@@ -61,13 +65,13 @@ export async function DELETE(
         if (!updatedCategory) {
             return Response.json({
                 ok: false,
-                message: "Unable to update category stock",
+                message: "Unable to update category's products",
             });
         };
 
         return Response.json({
             ok: true,
-            message: "Product deleted successfully",
+            message: `Product (${product.name}) deleted successfully`,
         });
     }
     catch(error: any) {
@@ -80,7 +84,7 @@ export async function DELETE(
 
 export async function PUT(
     request: Request,
-    { params }: { params: Promise<{ productId: string }> }
+    { params }: { params: Promise<ParamsProps> }
 ) {
     try {
         const auth = await getAuth({
@@ -94,24 +98,7 @@ export async function PUT(
             });
         };
 
-        const {
-            name,
-            description,
-            image,
-            recommended,
-            price,
-            stockValues,
-            status,
-        }: {
-            name: string;
-            description: string;
-            image: string;
-            recommended: boolean;
-            price: number;
-            stockValues: string[];
-            status: "active" | "inactive";
-        } = await request.json();
-
+        const { name, description, image, recommended, price, stockValues, status }: UpdateProps = await request.json();
         const { productId } = await params;
 
         const product = await ProductService
@@ -124,18 +111,24 @@ export async function PUT(
             });
         };
 
-        if (stockValues?.length > 0 && product.stockType === "account") {
-            const invalidStockValues = stockValues?.filter((stockValue) => !/^[^:\s]+:[^:\s]+$/.test(stockValue));
-
-            if (invalidStockValues.length > 0) {
-                return Response.json({
-                    ok: false,
-                    message: `Invalid stock format found: ${invalidStockValues.join(", ")}`,
+        switch (product.stockType) {
+            case "account":
+                stockValues.forEach((value: string) => {
+                    const [username, password] = value.split(":");
+                    if (username === undefined || password === undefined) {
+                        throw new Error("Invalid account stock format: expected 'username:password");
+                    };
                 });
-            };
+                break;
+            case "mystery-box":
+                stockValues
+                    .map((value) => ({ value, sort: Math.random() }))
+                    .sort((a, b) => a.sort - b.sort)
+                    .map(({ value }) => value);
+                break;
+            default:
+                break;
         };
-
-        const stock = stockValues?.length;
 
         const updatedProduct = await ProductService
             .update(productId, {
@@ -144,8 +137,8 @@ export async function PUT(
                 image,
                 recommended,
                 price,
-                stock,
-                stockValues,
+                stock: stockValues.length,
+                stockValues: stockValues,
                 status,
             });
 
@@ -158,7 +151,7 @@ export async function PUT(
 
         return Response.json({
             ok: true,
-            message: "Product updated successfully",
+            message: `Product (${product.name}) updated successfully`,
         });
     }
     catch(error: any) {

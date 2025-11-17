@@ -4,9 +4,18 @@ import { ProductService } from "@/services/products.service";
 import { PurchaseService } from "@/services/purchases.service";
 import { UserService } from "@/services/users.service";
 
+interface ParamsProps {
+    productId: string;
+};
+
+interface PurchaseItemProps {
+    quantity: number;
+    turnstileToken: string;
+};
+
 export async function POST(
     request: Request,
-    { params }: { params: Promise<{ productId: string }> }
+    { params }: { params: Promise<ParamsProps> }
 ) {
     try {
         const auth = await getAuth({
@@ -20,17 +29,8 @@ export async function POST(
             });
         };
 
-        const {
-            quantity,
-            turnstileToken,
-        }: {
-            quantity: number;
-            turnstileToken: string;
-        } = await request.json();
-
+        const { quantity, turnstileToken }: PurchaseItemProps = await request.json();
         const { productId } = await params;
-
-        /*
 
         if (!turnstileToken) {
             return Response.json({
@@ -48,8 +48,6 @@ export async function POST(
             });
         };
 
-        */
-
         if (!quantity) {
             return Response.json({
                 ok: false,
@@ -58,7 +56,7 @@ export async function POST(
         };
 
         const user = await UserService
-            .getByUsername(auth.data?.username as string);
+            .getByUsername(auth.data.username);
 
         if (!user) {
             return Response.json({
@@ -80,7 +78,7 @@ export async function POST(
         if (product.stock === 0) {
             return Response.json({
                 ok: false,
-                message: "This product is out of stock",
+                message: "Product is out of stock",
             });
         };
 
@@ -96,27 +94,33 @@ export async function POST(
         if (user.balance < productTotalAmount) {
             return Response.json({
                 ok: false,
-                message: "Insufficient balance"
+                message: "Insufficient balance",
             });
         };
 
-        const updatedUser = await UserService
-            .update(user._id, {
-                balance: Number(user.balance) - productTotalAmount,
-            });
+        const purchaseItems: string[] = [];
 
-        if (!updatedUser) {
-            return Response.json({
-                ok: false,
-                message: "Unable to update user balance",
-            });
+        switch (product.stockType) {
+            case "mystery-box":
+                for (let i = 0; i < quantity; i++) {
+                    const randomIndex = Math.floor(Math.random() * product.stockValues.length);
+                    const item = product.stockValues[randomIndex];
+                    purchaseItems.push(item);
+                    product.stockValues.splice(randomIndex, 1);
+                };
+                break;
+            default:
+                purchaseItems.push(...product.stockValues.splice(0, quantity));
+                break;
         };
 
-        const purchaseItems = product.stockValues.splice(0, quantity);
-
+        user.balance -= productTotalAmount;
         product.stock = product.stockValues.length;
-        
-        await product.save();
+
+        await Promise.all([
+            await user.save(),
+            await product.save(),
+        ]);
 
         const purchase = await PurchaseService
             .create({
@@ -127,7 +131,7 @@ export async function POST(
                 productQuantity: quantity,
                 productTotalAmount,
                 productType: product.stockType,
-                productValue: purchaseItems as string[],
+                productValue: purchaseItems,
             });
 
         if (!purchase) {
@@ -139,7 +143,7 @@ export async function POST(
 
         return Response.json({
             ok: true,
-            message: "Purchased successfully",
+            message: "Purchased successful",
         });
     }
     catch(error: any) {

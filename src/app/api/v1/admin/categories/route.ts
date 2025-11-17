@@ -1,6 +1,13 @@
 import { getAuth } from "@/lib/auth";
 import { CategoryService } from "@/services/categories.service";
 
+interface RequestProps {
+    name: string;
+    description?: string;
+    image: string;
+    recommended?: boolean;
+};
+
 export async function POST(request: Request) {
     try {
         const auth = await getAuth({
@@ -14,17 +21,7 @@ export async function POST(request: Request) {
             });
         };
 
-        const {
-            name,
-            description,
-            image,
-            recommended,
-        }: {
-            name: string;
-            description?: string;
-            image: string;
-            recommended?: boolean;
-        } = await request.json();
+        const { name, description, image, recommended }: RequestProps = await request.json();
 
         if (
             !name ||

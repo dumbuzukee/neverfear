@@ -1,13 +1,12 @@
 "use client";
 
-import { Container, Notification, Paper, ScrollArea, Tabs, TabsList, TabsPanel, TabsTab, Title } from "@mantine/core";
+import { Container, Notification, Paper, ScrollArea } from "@mantine/core";
 import { useEffect, useState } from "react";
 
 import axios from "axios";
 import PurchaseHistoryCard from "./PurchaseHistoryCard";
 
 export default function HistoryTabs() {
-
     const [purchases, setPurchases] = useState<any[]>([]);
     const [fetchedPurchases, setFetchedPurchases] = useState(false);
 
@@ -35,7 +34,7 @@ export default function HistoryTabs() {
     ));
 
     return (
-        <Container size="lg" my="xl">
+        <Container size="xl" my="xl">
             <Paper p="md" radius="md" shadow="sm" withBorder>
                 {!fetchedPurchases
                     ? (

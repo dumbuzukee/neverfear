@@ -2,7 +2,7 @@
 
 import { Badge, Button, Card, Group, Image, Stack, Text, } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
-import { IconShoppingCart } from "@tabler/icons-react";
+import { IconShoppingCart, IconShoppingCartFilled } from "@tabler/icons-react";
 import { useState } from "react";
 
 import axios from "axios";
@@ -71,24 +71,24 @@ export default function ProductCard({ product }: { product: any }) {
                 </>
             )}
             <Stack mt="md" gap="xs">
-                <Text c="gray" fz="md" fw={500}>
+                <Text c="gray" fz="sm" fw={500}>
                     {product.name}
                 </Text>
-                <Group>
+                <Group justify="space-between">
                     <Text
-                        fz="md"
-                        fw={700}
+                        fz="sm"
+                        fw={500}
                         variant="gradient"
                         gradient={{ from: "violet", to: "grape" }}
                     >
                         {product.price}฿
                     </Text>
-                    <Text c="dimmed" fz="md" fw={500}>
+                    <Text c="dimmed" fz="sm" fw={400}>
                         {product.stock} Left
                     </Text>
                 </Group>
                 <Button
-                    leftSection={<IconShoppingCart size={18} />}
+                    leftSection={<IconShoppingCartFilled size={16} stroke={1.5} />}
                     radius="md"
                     variant="gradient"
                     gradient={{ from: "violet", to: "grape" }}

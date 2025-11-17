@@ -3,7 +3,7 @@ import { decrypt, encrypt } from "./jwt";
 
 const cookieName = "token";
 const cookieSecure = process.env.NODE_ENV === "production";
-const cookieMaxAge = 60 * 60;
+const cookieMaxAge = 24 * 60 * 60;
 
 export const setCookie = async (payload: any) => {
     const cookie = await encrypt(payload);

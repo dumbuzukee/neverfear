@@ -1,6 +1,11 @@
 import axios from "axios";
 
-export const validateTurnstile = async (turnstileToken: string) => {
+interface ValidateTurnstileResponse {
+    success: boolean;
+    message: string;
+};
+
+export const validateTurnstile = async (turnstileToken: string): Promise<ValidateTurnstileResponse> => {
     try {
         const response = await axios
             .post("https://challenges.cloudflare.com/turnstile/v0/siteverify", new URLSearchParams({

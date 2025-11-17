@@ -2,11 +2,27 @@ import { UserService } from "@/services/users.service";
 import { getCookie } from "./cookie";
 import { connectMongoDB } from "./mongodb";
 
-export const getAuth = async ({
-    withAdminRole
-}: {
+interface GetAuthProps {
     withAdminRole: boolean;
-}) => {
+};
+
+interface FailedResponse {
+    success: false;
+    message: string;
+};
+
+interface SuccessResponse {
+    success: true;
+    message: string;
+    data: {
+        username: string;
+        balance: number;
+        totalBalance: number;
+        role: "dev" | "admin" | "user" | "guest";
+    };
+};
+
+export const getAuth = async ({ withAdminRole }: GetAuthProps): Promise<FailedResponse | SuccessResponse> => {
     const payload = await getCookie();
 
     if (!payload) {

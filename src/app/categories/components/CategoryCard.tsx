@@ -14,7 +14,7 @@ export default function CategoryCard({ category }: { category: any }) {
     return (
         <Card
             component={Link}
-            href={"/categories/" + category._id}
+            href={`/categories/${category._id}`}
             p="md"
             radius="md"
             shadow="sm"
@@ -28,19 +28,8 @@ export default function CategoryCard({ category }: { category: any }) {
         >
             <Image
                 src={category.image}
-                height={160}
+                height={180}
             />
-            <Badge
-                variant="gradient"
-                gradient={{ from: "violet", to: "grape" }}
-                style={{
-                    top: "var(--mantine-spacing-xs)",
-                    left: "var(--mantine-spacing-xs)",
-                    position: "absolute"
-                }}
-            >
-                {category.status}
-            </Badge>
             {category.recommended && (
                 <>
                 <Badge
@@ -56,13 +45,13 @@ export default function CategoryCard({ category }: { category: any }) {
                 </Badge>
                 </>
             )}
-            <Stack mt="md">
+            <Stack mt="sm">
                 <Group justify="space-between">
                     <Stack gap={0}>
-                        <Text c="gray" fz="md" fw={500}>
+                        <Text c="gray" fz="sm" fw={500}>
                             {category.name}
                         </Text>
-                        <Text c="dimmed" fz="sm" fw={500}>
+                        <Text c="dimmed" fz="sm" fw={400}>
                             Products: {category.products}
                         </Text>
                     </Stack>

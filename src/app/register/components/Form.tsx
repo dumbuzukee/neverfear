@@ -60,7 +60,9 @@ export default function RegisterForm() {
                     color: "green",
                     autoClose: 3000,
                 });
-                window.location.href = "/";
+                setTimeout(() => {
+                    window.location.href = "/";
+                }, 2000);
             } else {
                 notifications.show({
                     message: response.data.message,
@@ -121,7 +123,7 @@ export default function RegisterForm() {
                     loading={loading}
                     disabled={turnstileLoading}
                 >
-                    Register
+                    {turnstileLoading ? "Waiting for verified cloudflare" : "Confirm Register"}
                 </Button>
             </Stack>
         </form>

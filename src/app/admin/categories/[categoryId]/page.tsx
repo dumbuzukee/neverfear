@@ -2,17 +2,19 @@
 
 import { Button } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { IconShoppingBag } from "@tabler/icons-react";
+import { IconPackage } from "@tabler/icons-react";
 import { use } from "react";
 
-import SectionHeader from "@/components/SectionHeader/SectionHeader";
 import Link from "next/link";
-import Products from "./components/Products";
 import CreateProductModal from "./components/CreateModal";
+import Products from "./components/Products";
+import SectionHeader from "@/components/HeaderSection/HeaderSection";
 
+interface ParamsProps {
+    categoryId: string;
+};
 
-export default function AdminCategoryPage({ params }: { params: Promise<{ categoryId: string }> }) {
-
+export default function AdminCategoryPage({ params }: { params: Promise<ParamsProps> }) {
     const { categoryId } = use(params);
     const [openedCreateModal, { open: openCreateModal, close: closeCreateModel }] = useDisclosure(false);
 
@@ -26,7 +28,7 @@ export default function AdminCategoryPage({ params }: { params: Promise<{ catego
         <SectionHeader
             title="Manage Products"
             description="Add, edit, and delete products."
-            Icon={IconShoppingBag}
+            Icon={IconPackage}
         >
             <Button
                 radius="md"

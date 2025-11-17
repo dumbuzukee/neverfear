@@ -54,7 +54,9 @@ export default function LoginForm() {
                     color: "green",
                     autoClose: 3000,
                 });
-                window.location.href = "/";
+                setTimeout(() => {
+                    window.location.href = "/";
+                }, 2000);
             } else {
                 notifications.show({
                     message: response.data.message,
@@ -101,7 +103,7 @@ export default function LoginForm() {
                     loading={loading}
                     disabled={turnstileLoading}
                 >
-                    Login
+                    {turnstileLoading ? "Waiting for verified cloudflare" : "Confirm Login"}
                 </Button>
             </Stack>
         </form>

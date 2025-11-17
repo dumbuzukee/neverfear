@@ -3,9 +3,10 @@ import { deleteCookie } from "@/lib/cookie";
 export async function POST() {
     try {
         await deleteCookie();
+        
         return Response.json({
             ok: true,
-            message: "Logged out successfully",
+            message: "Logged out successful",
         });
     }
     catch(error: any) {

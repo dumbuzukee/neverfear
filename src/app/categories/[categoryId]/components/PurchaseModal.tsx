@@ -2,20 +2,27 @@
 
 import { Blockquote, Button, Group, Modal, NumberInput, Stack, Text, Title } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
-import axios from "axios";
+import { IconListNumbers } from "@tabler/icons-react";
+import { Turnstile } from "@marsidev/react-turnstile";
 import { useState } from "react";
+
+import axios from "axios";
 
 
 export default function PurchaseModal({ opened, close, product }: { opened: boolean, close: () => void, product: any }) {
     const [quantity, setQuantity] = useState<number | string>("1");
     const [purchasing, setPurchasing] = useState(false);
+    
+    const [turnstileToken, setTurnstileToken] = useState<string>("");
+    const [turnstileLoading, setTurnstileLoading] = useState(true);
 
     const handlePurchaseItem = async () => {
         setPurchasing(true);
 
         const response = await axios
-            .post(`/api/v1/users/purchase/${product._id}`, {
+            .post(`/api/v1/users/purchaseItem/${product._id}`, {
                 quantity,
+                turnstileToken,
             });
 
         if (response.data.ok) {
@@ -24,13 +31,16 @@ export default function PurchaseModal({ opened, close, product }: { opened: bool
                 color: "green",
                 autoClose: true,
             });
-            window.location.reload();
+            setTimeout(() => {
+                window.location.reload();
+            }, 2000);
         } else {
             notifications.show({
                 message: response.data.message,
                 color: "red",
                 autoClose: true,
             });
+            window.turnstile?.reset();
         };
 
         setPurchasing(false);
@@ -50,27 +60,41 @@ export default function PurchaseModal({ opened, close, product }: { opened: bool
                 <Blockquote cite="Description!" radius="md">
                     {product.description}
                 </Blockquote>
-                <Group justify="space-between">
-                    <NumberInput
-                        label="Select Quantity"
-                        placeholder="1"
-                        value={quantity}
-                        onChange={setQuantity}
-                        allowDecimal={false}
-                        radius="md"
-                        min={1}
-                        max={100}
-                    />
-                    <Text c="green" >
+                <NumberInput
+                    leftSection={<IconListNumbers size={16} stroke={1.5} />}
+                    label="Quantity"
+                    description="How many items would you like to purchase?"
+                    placeholder="1"
+                    value={quantity}
+                    onChange={setQuantity}
+                    allowDecimal={false}
+                    min={1}
+                    max={100}
+                    radius="md"
+                />
+                <Group gap="xs">
+                    <Text c="gray" fz="sm">
+                        Total Price:
+                    </Text>
+                    <Text c="green" fz="sm" fw={500}>
                         {product.price * Number(quantity || 1)}
                     </Text>
                 </Group>
+                <Turnstile
+                    siteKey={process.env.NEXT_PUBLIC_CLOUDFLARE_TURNSTILE_SITE_KEY!}
+                    onSuccess={(token) => {
+                        setTurnstileLoading(false);
+                        setTurnstileToken(token);
+                    }}
+                    options={{ theme: "dark" }}
+                />
                 <Button
                     radius="md"
                     variant="gradient"
                     gradient={{ from: "violet", to: "grape" }}
                     onClick={handlePurchaseItem}
                     loading={purchasing}
+                    disabled={turnstileLoading}
                 >
                     Confirm Purchase
                 </Button>

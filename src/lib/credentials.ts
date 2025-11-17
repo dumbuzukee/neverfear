@@ -1,13 +1,16 @@
 
-export const validateCredentials = async ({
-    email,
-    username,
-    password,
-}: {
+interface ValidateCredentialsProps {
     email?: string;
-    username?: string;
+    username? :string;
     password?: string;
-}) => {
+};
+
+interface ValidateCredentialsResponse {
+    success: boolean;
+    message: string;
+};
+
+export const validateCredentials = async ({ email, username, password }: ValidateCredentialsProps): Promise<ValidateCredentialsResponse> => {
     if (email !== undefined) {
         if (!email.trim()) {
             return {
@@ -61,11 +64,6 @@ export const validateCredentials = async ({
 
     return {
         success: true,
-        message: "Verified credentials successfully",
-        credentials: {
-            email,
-            username,
-            password,
-        },
+        message: "Validated credentials successfully",
     };
 };

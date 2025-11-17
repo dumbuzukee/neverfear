@@ -16,15 +16,15 @@ export async function GET() {
         };
 
         const user = await UserService
-            .getByUsername(auth.data?.username as string);
+            .getByUsername(auth.data.username);
 
-        const purchaseHistory = await PurchaseService
+        const purchaseHistories = await PurchaseService
             .getAll(user._id);
 
         return Response.json({
             ok: true,
-            message: "Purchases History fetched successfully",
-            data: purchaseHistory,
+            message: "Purchased histories fetched successfully",
+            data: purchaseHistories,
         });
     }
     catch(error: any) {

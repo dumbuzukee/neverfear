@@ -5,7 +5,7 @@ import LoginForm from "./components/Form";
 
 export default function LoginPage() {
     return (
-        <Container size={480}>
+        <Container size={480} my="xl">
             <Paper
                 p="xl"
                 radius="md"

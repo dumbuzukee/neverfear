@@ -5,19 +5,16 @@ import { connectMongoDB } from "@/lib/mongodb";
 import { validateTurnstile } from "@/lib/turnstile";
 import { UserService } from "@/services/users.service";
 
+interface RegisterProps {
+    email: string;
+    username: string;
+    password: string;
+    turnstileToken: string;
+};
+
 export async function POST(request: Request) {
     try {
-        const {
-            email,
-            username,
-            password,
-            turnstileToken,
-        }: {
-            email: string;
-            username: string;
-            password: string;
-            turnstileToken: string;
-        } = await request.json();
+        const { email, username, password, turnstileToken }: RegisterProps = await request.json();
 
         if (!turnstileToken) {
             return Response.json({
@@ -62,7 +59,7 @@ export async function POST(request: Request) {
         await connectMongoDB();
 
         const isEmailExisted = await UserService
-            .getByEmail(validatedCredentials.credentials?.email as string);
+            .getByEmail(email);
 
         if (isEmailExisted) {
             return Response.json({
@@ -72,7 +69,7 @@ export async function POST(request: Request) {
         };
 
         const isUsernameExisted = await UserService
-            .getByUsername(validatedCredentials.credentials?.username as string);
+            .getByUsername(username);
 
         if (isUsernameExisted) {
             return Response.json({
@@ -81,12 +78,12 @@ export async function POST(request: Request) {
             });
         };
 
-        const hashedPassword = await hashValue(validatedCredentials.credentials?.password as string);
+        const hashedPassword = await hashValue(password);
 
         const user = await UserService
             .create({
-                email: validatedCredentials.credentials?.email as string,
-                username: validatedCredentials.credentials?.username as string,
+                email,
+                username,
                 password: hashedPassword,
             });
 

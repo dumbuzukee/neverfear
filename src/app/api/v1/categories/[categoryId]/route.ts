@@ -1,9 +1,14 @@
+import { connectMongoDB } from "@/lib/mongodb";
 import { CategoryService } from "@/services/categories.service";
 import { ProductService } from "@/services/products.service";
 
+interface ParamsProps {
+    categoryId: string;
+};
+
 export async function GET(
     request: Request,
-    { params }: { params: Promise<{ categoryId: string }> }
+    { params }: { params: Promise<ParamsProps> }
 ) {
     try {
         const { categoryId } = await params;
@@ -19,11 +24,11 @@ export async function GET(
         };
 
         const products = await ProductService
-            .getAll(categoryId, false);
-        
+            .getAllForUsers(categoryId);
+
         return Response.json({
             ok: true,
-            message: "Products fetched successfully",
+            message: `Products from category (${categoryId}) fetched successfully`,
             data: products,
         });
     }

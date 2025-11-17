@@ -1,13 +1,20 @@
 "use client";
 
-import { Button, Checkbox, Modal, Select, Stack, Textarea, TextInput } from "@mantine/core";
+import { Button, Checkbox, Chip, Group, Modal, Select, Stack, Textarea, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
+import { IconCheck, IconFileDescription, IconPencil, IconPhoto } from "@tabler/icons-react";
 import { useState } from "react";
 
 import axios from "axios";
 
-export default function EditCategoryModal({ opened, close, category }: { opened: boolean, close: () => void, category: any }) {
+interface EditCategoryModalProps {
+    opened: boolean;
+    close: () => void;
+    category: any;
+};
+
+export default function EditCategoryModal({ opened, close, category }: EditCategoryModalProps) {
     const form = useForm({
         initialValues: {
             name: category.name,
@@ -47,7 +54,9 @@ export default function EditCategoryModal({ opened, close, category }: { opened:
                     color: "green",
                     autoClose: 3000,
                 });
-                window.location.reload();
+                setTimeout(() => {
+                    window.location.reload();
+                }, 2000);
             } else {
                 notifications.show({
                     message: response.data.message,
@@ -74,14 +83,18 @@ export default function EditCategoryModal({ opened, close, category }: { opened:
                 <Stack>
                     <TextInput
                         required
+                        leftSection={<IconPencil size={16} stroke={1.5} />}
                         label="Category Name"
-                        placeholder="Enter your category name"
+                        description="Update your category name"
+                        placeholder="Example Category"
                         radius="md"
                         {...form.getInputProps("name")}
                     />
                     <Textarea
+                        leftSection={<IconFileDescription size={16} stroke={1.5} />}
                         label="Category Description"
-                        placeholder="Enter your category description"
+                        description="Update your category description"
+                        placeholder="Category Description..."
                         radius="md"
                         autosize
                         minRows={6}
@@ -90,27 +103,32 @@ export default function EditCategoryModal({ opened, close, category }: { opened:
                     />
                     <TextInput
                         required
+                        leftSection={<IconPhoto size={16} stroke={1.5} />}
                         label="Category Image"
-                        placeholder="Enter your category image"
+                        description="Update your category image URL"
+                        placeholder="https://..."
                         radius="md"
                         {...form.getInputProps("image")}
                     />
-                    <Checkbox
-                        label="Category Recommended"
-                        checked={form.values.recommended}
-                        onChange={(event) => form.setFieldValue("recommended", event.currentTarget.checked)}
-                    />
-                    <Select
-                        required
-                        label="Category Status"
-                        placeholder="Select a status"
-                        radius="md"
-                        data={[
-                            { value: "active", label: "Active" },
-                            { value: "inactive", label: "Inactive" }
-                        ]}
-                        {...form.getInputProps("status")}
-                    />
+                    <Group>
+                        <Chip
+                            icon={<IconCheck size={16} stroke={1.5} />}
+                            variant="light"
+                            checked={form.values.recommended}
+                            onChange={() => form.setFieldValue("recommended", !form.values.recommended)}
+                        >
+                            Recommended
+                        </Chip>
+                        <Chip
+                            icon={<IconCheck size={16} stroke={1.5} />}
+                            color="green"
+                            variant="light"
+                            checked={form.values.status === "active"}
+                            onChange={() => form.setFieldValue("status", (form.values.status === "active") ? "inactive" : "active")}
+                        >
+                            Active
+                        </Chip>
+                    </Group>
                     <Button
                         type="submit"
                         radius="md"

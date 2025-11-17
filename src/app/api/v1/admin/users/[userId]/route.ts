@@ -1,9 +1,20 @@
 import { getAuth } from "@/lib/auth";
 import { UserService } from "@/services/users.service";
 
+interface ParamsProps {
+    userId: string;
+};
+
+interface UpdateProps {
+    password?: string;
+    balance?: number;
+    totalBalance?: number;
+    role?: "admin" | "user" | "guest";
+};
+
 export async function DELETE(
     request: Request,
-    { params }: { params: Promise<{ userId: string }> }
+    { params }: { params: Promise<ParamsProps> }
 ) {
     try {
         const auth = await getAuth({
@@ -19,37 +30,34 @@ export async function DELETE(
 
         const { userId } = await params;
 
-        const user = await UserService
+        const target = await UserService
             .getById(userId);
 
-        if (!user) {
+        if (!target) {
             return Response.json({
                 ok: false,
                 message: "User not found",
             });
         };
 
-        if (user.username === auth.data?.username) {
+        if (target.username === auth.data.username) {
             return Response.json({
                 ok: false,
                 message: "You are not allowed to delete your account",
             });
         };
 
-        if (
-            auth.data?.role !== "dev" &&
-            user.role === "admin"
-        ) {
+        if (target.role === "dev") {
             return Response.json({
                 ok: false,
-                message: "You are not allowed to delete administrator",
+                message: "You are not allowed to delete developer account",
             });
         };
 
-        const deletedUser = await UserService
+        const deletedTarget = await UserService
             .delete(userId);
 
-        if (!deletedUser) {
+        if (!deletedTarget) {
             return Response.json({
                 ok: false,
                 message: "Unable to delete account",
@@ -58,7 +66,7 @@ export async function DELETE(
 
         return Response.json({
             ok: true,
-            message: "Account deleted successfully",
+            message: `Account (${target.username}) deleted successfully`,
         });
     }
     catch(error: any) {
@@ -71,11 +79,11 @@ export async function DELETE(
 
 export async function PUT(
     request: Request,
-    { params }: { params: Promise<{ userId: string }> }
+    { params }: { params: Promise<ParamsProps> }
 ) {
     try {
         const auth = await getAuth({
-            withAdminRole: false,
+            withAdminRole: true,
         });
 
         if (!auth.success) {
@@ -85,31 +93,20 @@ export async function PUT(
             });
         };
 
-        const {
-            password,
-            balance,
-            totalBalance,
-            role,
-        }: {
-            password?: string;
-            balance?: number;
-            totalBalance?: number;
-            role?: "admin" | "user" | "guest";
-        } = await request.json();
-
+        const { password, balance, totalBalance, role }: UpdateProps = await request.json();
         const { userId } = await params;
 
-        const user = await UserService
+        const target = await UserService
             .getById(userId);
 
-        if (!user) {
+        if (!target) {
             return Response.json({
                 ok: false,
                 message: "User not found",
             });
         };
 
-        const updatedUser = await UserService
+        const updatedTarget = await UserService
             .update(userId, {
                 password,
                 balance,
@@ -117,7 +114,7 @@ export async function PUT(
                 role,
             });
 
-        if (!updatedUser) {
+        if (!updatedTarget) {
             return Response.json({
                 ok: false,
                 message: "Unable to update account",
@@ -126,7 +123,7 @@ export async function PUT(
 
         return Response.json({
             ok: true,
-            message: "Account updated successfully",
+            message: `Account (${target.username}) updated successfully`,
         });
     }
     catch(error: any) {

@@ -1,11 +1,22 @@
-
 import { getAuth } from "@/lib/auth";
 import { CategoryService } from "@/services/categories.service";
 import { ProductService } from "@/services/products.service";
 
+interface ParamsProps {
+    categoryId: string;
+};
+
+interface UpdateProps {
+    name?: string;
+    description?: string;
+    image?: string;
+    recommended?: boolean;
+    status?: "active" | "inactive";
+};
+
 export async function DELETE(
     request: Request,
-    { params }: { params: Promise<{ categoryId: string }> }
+    { params }: { params: Promise<ParamsProps> }
 ) {
     try {
         const auth = await getAuth({
@@ -24,7 +35,7 @@ export async function DELETE(
         const category = await CategoryService
             .getById(categoryId);
 
-        if (!category) {
+        if (!categoryId) {
             return Response.json({
                 ok: false,
                 message: "Category not found",
@@ -41,9 +52,26 @@ export async function DELETE(
             });
         };
 
+        const products = await ProductService
+            .getAll(categoryId);
+
+        const deletedProducts = (await Promise.all(
+            products.map(
+                async (product) =>
+                    await ProductService.delete(product._id)
+            )
+        ));
+
+        if (!deletedProducts) {
+            return Response.json({
+                ok: false,
+                message: "Unable to delete category's products",
+            });
+        };
+
         return Response.json({
             ok: true,
-            message: "Category deleted successfully",
+            message: `Category (${category.name}) deleted successfully`,
         });
     }
     catch(error: any) {
@@ -56,7 +84,7 @@ export async function DELETE(
 
 export async function GET(
     request: Request,
-    { params }: { params: Promise<{ categoryId: string }> }
+    { params }: { params: Promise<ParamsProps> }
 ) {
     try {
         const auth = await getAuth({
@@ -83,11 +111,11 @@ export async function GET(
         };
 
         const products = await ProductService
-            .getAll(categoryId, true);
+            .getAll(categoryId);
 
         return Response.json({
             ok: true,
-            message: "Products fetched successfully",
+            message: `Products from category (${category.name}) fetched successfully`,
             data: products,
         });
     }
@@ -101,7 +129,7 @@ export async function GET(
 
 export async function PUT(
     request: Request,
-    { params }: { params: Promise<{ categoryId: string }> }
+    { params }: { params: Promise<ParamsProps> }
 ) {
     try {
         const auth = await getAuth({
@@ -115,22 +143,7 @@ export async function PUT(
             });
         };
 
-        const {
-            name,
-            description,
-            image,
-            recommended,
-            products,
-            status,
-        }: {
-            name?: string;
-            description?: string;
-            image?: string;
-            recommended?: boolean;
-            products?: number;
-            status?: "active" | "inactive";
-        } = await request.json();
-
+        const { name, description, image, recommended, status }: UpdateProps = await request.json();
         const { categoryId } = await params;
 
         const category = await CategoryService
@@ -149,7 +162,6 @@ export async function PUT(
                 description,
                 image,
                 recommended,
-                products,
                 status,
             });
 
@@ -162,7 +174,7 @@ export async function PUT(
 
         return Response.json({
             ok: true,
-            message: "Category updated successfully",
+            message: `Category (${category.name}) updated successfully`,
         });
     }
     catch(error: any) {

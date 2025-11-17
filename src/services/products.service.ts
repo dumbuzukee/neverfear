@@ -9,16 +9,23 @@ export abstract class ProductService {
         return await ProductModel
             .findByIdAndDelete(productId);
     };
-    static getAll = async (categoryId: string, withFullAccess: boolean) => {
-        return (withFullAccess)
+    static getAll = async (categoryId?: string) => {
+        return categoryId !== undefined
             ? await ProductModel
                 .find({ categoryId })
-                .sort({ createdAt: -1 })
             : await ProductModel
+                .find();
+    };
+    static getAllForUsers = async (categoryId?: string) => {
+        return categoryId !== undefined
+            ? await ProductModel
                 .find({ categoryId })
                 .select("-stockType -stockValues")
                 .lean()
-                .sort({ createdAt: -1 });
+            : await ProductModel
+                .find()
+                .select("-stockType -stockValues")
+                .lean();
     };
     static getById = async (productId: string) => {
         return await ProductModel

@@ -1,11 +1,11 @@
 "use client";
 
 import { Box, Button, Container, Group } from "@mantine/core";
-import { IconUsers } from "@tabler/icons-react";
+import { IconUsers, IconUsersGroup } from "@tabler/icons-react";
 
 import Link from "next/link";
-import SectionHeader from "@/components/SectionHeader/SectionHeader";
-import UsersTable from "./components/Users";
+import SectionHeader from "@/components/HeaderSection/HeaderSection";
+import UsersTable from "./components/UsersTable";
 
 export default function AdminPage() {
 
@@ -14,7 +14,7 @@ export default function AdminPage() {
         <SectionHeader
             title="Manage Users"
             description="Edit, remove user"
-            Icon={IconUsers}
+            Icon={IconUsersGroup}
         >
             <Button
                 component={Link}

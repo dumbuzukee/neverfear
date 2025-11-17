@@ -5,17 +5,15 @@ import { connectMongoDB } from "@/lib/mongodb";
 import { validateTurnstile } from "@/lib/turnstile";
 import { UserService } from "@/services/users.service";
 
+interface LoginProps {
+    username: string;
+    password: string;
+    turnstileToken: string;
+};
+
 export async function POST(request: Request) {
     try {
-        const {
-            username,
-            password,
-            turnstileToken,
-        }: {
-            username: string;
-            password: string;
-            turnstileToken: string;
-        } = await request.json();
+        const { username, password, turnstileToken }: LoginProps = await request.json();
 
         if (!turnstileToken) {
             return Response.json({
@@ -58,24 +56,24 @@ export async function POST(request: Request) {
         await connectMongoDB();
 
         const user = await UserService
-            .getByUsername(validatedCredentials.credentials?.username as string);
+            .getByUsername(username);
 
         if (!user) {
             return Response.json({
                 ok: false,
-                message: "Username not found",
+                message: "Invalid username",
             });
         };
 
         const comparedPassword = await compareValues(
-            validatedCredentials.credentials?.password as string,
-            user.password
+            password,
+            user.password,
         );
 
         if (!comparedPassword) {
             return Response.json({
                 ok: false,
-                message: "Incorrect password",
+                message: "Invalid password",
             });
         };
 
@@ -87,7 +85,7 @@ export async function POST(request: Request) {
 
         return Response.json({
             ok: true,
-            message: "Logged in successfully",
+            message: "Logged in successful",
         });
     }
     catch(error: any) {

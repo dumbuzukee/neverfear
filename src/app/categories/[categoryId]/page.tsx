@@ -4,7 +4,7 @@ import { useDisclosure } from "@mantine/hooks";
 import { IconShoppingBag } from "@tabler/icons-react";
 import { use } from "react";
 
-import SectionHeader from "@/components/SectionHeader/SectionHeader";
+import SectionHeader from "@/components/HeaderSection/HeaderSection";
 import Products from "./components/Products";
 
 export default function CategoryPage({ params }: { params: Promise<{ categoryId: string }> }) {
@@ -14,7 +14,7 @@ export default function CategoryPage({ params }: { params: Promise<{ categoryId:
         <>
         <SectionHeader
             title="Products"
-            description="Lorem ipsum dolor sit amet consectetur adipiscing elit."
+            description="View all products from this category."
             Icon={IconShoppingBag}
         ></SectionHeader>
         <Products

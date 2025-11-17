@@ -3,10 +3,11 @@
 import { Badge, Button, Card, Group, Image, Menu, MenuDropdown, MenuItem, MenuTarget, Stack, Text, } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
-import { IconEdit, IconEye, IconSettings, IconShoppingCartCog, IconTrash } from "@tabler/icons-react";
+import { modals } from "@mantine/modals";
+import { IconEdit, IconEye, IconSettings, IconTrash } from "@tabler/icons-react";
 
-import ProductInfoModal from "./InfoModal";
 import EditProductModal from "./EditModal";
+import ProductInfoModal from "./InfoModal";
 
 import axios from "axios";
 
@@ -24,7 +25,9 @@ export default function ProductCard({ product }: { product: any }) {
                 color: "green",
                 autoClose: 3000,
             });
-            window.location.reload();
+            setTimeout(() => {
+                window.location.reload();
+            }, 2000);
         } else {
             notifications.show({
                 message: response.data.message,
@@ -83,27 +86,19 @@ export default function ProductCard({ product }: { product: any }) {
             )}
             <Stack mt="md">
                 <Stack gap={0}>
-                    <Text
-                        c="gray"
-                        fz="md"
-                        fw={500}
-                    >
+                    <Text c="gray" fz="sm" fw={500}>
                         {product.name}
                     </Text>
-                    <Group>
+                    <Group justify="space-between">
                         <Text
-                            fz="md"
-                            fw={700}
+                            fz="sm"
+                            fw={500}
                             variant="gradient"
                             gradient={{ from: "violet", to: "grape" }}
                         >
                             {product.price}฿
                         </Text>
-                        <Text
-                            c="dimmed"
-                            fz="md"
-                            fw={500}
-                        >
+                        <Text c="dimmed" fz="sm" fw={400}>
                             {product.stock} Left
                         </Text>
                     </Group>
@@ -135,7 +130,17 @@ export default function ProductCard({ product }: { product: any }) {
                         <MenuItem
                             leftSection={<IconTrash size={16} stroke={1.5} />}
                             color="red"
-                            onClick={handleDeleteProduct}
+                            onClick={() => modals.openConfirmModal({
+                                title: "Confirm Delete Product",
+                                children: (
+                                    <Text>
+                                        Are you certain you want to delete this product? This action is destructive.
+                                    </Text>
+                                ),
+                                labels: { confirm: "Delete Product", cancel: "Cancel" },
+                                confirmProps: { color: "red" },
+                                onConfirm: handleDeleteProduct
+                            })}
                         >
                             Delete Product
                         </MenuItem>

@@ -3,11 +3,12 @@
 import { ActionIcon, Badge, Button, Card, Group, Image, Menu, MenuDropdown, MenuItem, MenuTarget, Stack, Text, } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
+import { modals } from "@mantine/modals";
 import { IconEdit, IconEye, IconSettings, IconTrash } from "@tabler/icons-react";
 
 import Link from "next/link";
-import CategoryInfoModal from "./InfoModal";
 import EditCategoryModal from "./EditModal";
+import CategoryInfoModal from "./InfoModal";
 
 import axios from "axios";
 
@@ -25,7 +26,9 @@ export default function CategoryCard({ category }: { category: any }) {
                 color: "green",
                 autoClose: 3000,
             });
-            window.location.reload();
+            setTimeout(() => {
+                window.location.reload();
+            }, 2000);
         } else {
             notifications.show({
                 message: response.data.message,
@@ -55,7 +58,7 @@ export default function CategoryCard({ category }: { category: any }) {
         >
             <Image
                 src={category.image}
-                height={160}
+                height={180}
             />
             <Badge
                 variant="gradient"
@@ -86,10 +89,10 @@ export default function CategoryCard({ category }: { category: any }) {
             <Stack mt="md">
                 <Group justify="space-between">
                     <Stack gap={0}>
-                        <Text c="gray" fz="md" fw={500}>
+                        <Text c="gray" fz="sm" fw={500}>
                             {category.name}
                         </Text>
-                        <Text c="dimmed" fz="sm" fw={500}>
+                        <Text c="dimmed" fz="sm" fw={400}>
                             Products: {category.products}
                         </Text>
                     </Stack>
@@ -120,7 +123,17 @@ export default function CategoryCard({ category }: { category: any }) {
                             <MenuItem
                                 leftSection={<IconTrash size={16} stroke={1.5} />}
                                 color="red"
-                                onClick={handleDeleteCategory}
+                                onClick={() => modals.openConfirmModal({
+                                    title: "Confirm Delete Category",
+                                    children: (
+                                        <Text>
+                                            Are you certain you want to delete this category? This action is destructive.
+                                        </Text>
+                                    ),
+                                    labels: { confirm: "Delete Category", cancel: "Cancel" },
+                                    confirmProps: { color: "red" },
+                                    onConfirm: handleDeleteCategory
+                                })}
                             >
                                 Delete Category
                             </MenuItem>
@@ -129,7 +142,7 @@ export default function CategoryCard({ category }: { category: any }) {
                 </Group>
                 <Button
                     component={Link}
-                    href={"/admin/categories/" + category._id}
+                    href={`/admin/categories/${category._id}`}
                     radius="md"
                     variant="gradient"
                     gradient={{ from: "violet", to: "grape" }}

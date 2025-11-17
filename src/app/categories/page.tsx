@@ -1,17 +1,17 @@
 
 import { IconCategory } from "@tabler/icons-react";
 
-import SectionHeader from "@/components/SectionHeader/SectionHeader";
+import HeaderSection from "@/components/HeaderSection/HeaderSection";
 import Categories from "./components/Categories";
 
 export default function CategoriesPage() {
     return (
         <>
-        <SectionHeader
+        <HeaderSection
             title="Categories"
-            description="Categories."
+            description="View all NeverFear categories."
             Icon={IconCategory}
-        ></SectionHeader>
+        ></HeaderSection>
         <Categories />
         </>
     );

@@ -1,19 +1,26 @@
 "use client";
 
-import { Button, Checkbox, Modal, Stack, Textarea, TextInput } from "@mantine/core";
+import { Button, Chip, Group, Modal, Stack, Textarea, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
+import { notifications } from "@mantine/notifications";
 import { useState } from "react";
 
 import axios from "axios";
-import { notifications } from "@mantine/notifications";
+import { IconCheck, IconFileDescription, IconPencil, IconPhoto } from "@tabler/icons-react";
 
-export default function CreateCategoryModal({ opened, close }: { opened: boolean, close: () => void }) {
+interface CreateCategoryModalProps {
+    opened: boolean;
+    close: () => void;
+};
+
+export default function CreateCategoryModal({ opened, close }: CreateCategoryModalProps) {
     const form = useForm({
         initialValues: {
             name: "",
             description: "",
             image: "",
             recommended: false,
+            status: "active"
         },
     });
 
@@ -44,7 +51,9 @@ export default function CreateCategoryModal({ opened, close }: { opened: boolean
                     color: "green",
                     autoClose: 3000,
                 });
-                window.location.reload();
+                setTimeout(() => {
+                    window.location.reload();
+                }, 2000);
             } else {
                 notifications.show({
                     message: response.data.message,
@@ -71,14 +80,18 @@ export default function CreateCategoryModal({ opened, close }: { opened: boolean
                 <Stack>
                     <TextInput
                         required
+                        leftSection={<IconPencil size={16} stroke={1.5} />}
                         label="Category Name"
-                        placeholder="Enter your category name"
+                        description="Enter your category name"
+                        placeholder="Exmaple Category..."
                         radius="md"
                         {...form.getInputProps("name")}
                     />
                     <Textarea
                         label="Category Description"
-                        placeholder="Enter your category description"
+                        leftSection={<IconFileDescription size={16} stroke={1.5} />}
+                        description="Enter your category description"
+                        placeholder="Category Description..."
                         radius="md"
                         autosize
                         minRows={6}
@@ -87,15 +100,32 @@ export default function CreateCategoryModal({ opened, close }: { opened: boolean
                     />
                     <TextInput
                         required
+                        leftSection={<IconPhoto size={16} stroke={1.5} />}
                         label="Category Image"
-                        placeholder="Enter your category image"
+                        description="Enter your category image URL"
+                        placeholder="https://..."
                         radius="md"
                         {...form.getInputProps("image")}
                     />
-                    <Checkbox
-                        label="Category Recommended"
-                        {...form.getInputProps("recommended")}
-                    />
+                    <Group>
+                        <Chip
+                            icon={<IconCheck size={16} stroke={1.5} />}
+                            variant="light"
+                            checked={form.values.recommended}
+                            onChange={() => form.setFieldValue("recommended", !form.values.recommended)}
+                        >
+                            Recommended
+                        </Chip>
+                        <Chip
+                            icon={<IconCheck size={16} stroke={1.5} />}
+                            color="green"
+                            variant="light"
+                            checked={form.values.status === "active"}
+                            onChange={() => form.setFieldValue("status", (form.values.status === "active") ? "inactive" : "active")}
+                        >
+                            Active
+                        </Chip>
+                    </Group>
                     <Button
                         type="submit"
                         radius="md"

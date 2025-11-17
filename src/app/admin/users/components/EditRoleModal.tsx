@@ -1,34 +1,36 @@
 "use client";
 
-import { Button, Checkbox, Modal, NumberInput, Select, Stack, Textarea, TextInput } from "@mantine/core";
+import { Badge, Button, Group, Modal, Select, Stack, Text } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
 import { useState } from "react";
 
 import axios from "axios";
 
-export default function EditUserModal({ opened, close, user }: { opened: boolean, close: () => void, user: any }) {
+interface EditRoleModalProps {
+    opened: boolean;
+    close: () => void;
+    user: any;
+    color: string;
+};
+
+export default function EditRoleModal({ opened, close, user, color }: EditRoleModalProps) {
     const form = useForm({
         initialValues: {
-            balance: user.balance,
             role: user.role,
         },
     });
 
     const [updating, setUpdating] = useState(false);
 
-    const handleUpdateUser = form.onSubmit(
+    const handleUpdateRole = form.onSubmit(
         async (values) => {
-            const {
-                balance,
-                role
-            } = values;
+            const { role } = values;
 
             setUpdating(true);
 
             const response = await axios
                 .put(`/api/v1/admin/users/${user._id}`, {
-                    balance,
                     role,
                 });
 
@@ -38,7 +40,9 @@ export default function EditUserModal({ opened, close, user }: { opened: boolean
                     color: "green",
                     autoClose: 3000,
                 });
-                window.location.reload();
+                setTimeout(() => {
+                    window.location.reload();
+                }, 2000);
             } else {
                 notifications.show({
                     message: response.data.message,
@@ -54,31 +58,37 @@ export default function EditUserModal({ opened, close, user }: { opened: boolean
     return (
         <>
         <Modal
-            title="Update User"
+            title="Update Role"
             radius="md"
             shadow="sm"
             opened={opened}
             onClose={close}
             centered
         >
-            <form onSubmit={handleUpdateUser}>
+            <form onSubmit={handleUpdateRole}>
                 <Stack>
-                    <NumberInput
-                        required
-                        label="User Balance"
-                        placeholder="Update user balance"
-                        radius="md"
-                        {...form.getInputProps("balance")}
-                    />
+                    <Group gap="xs">
+                        <Text fz="sm" fw={500}>
+                            Current Role:
+                        </Text>
+                        <Badge
+                            color={color}
+                            variant="light"
+                        >
+                            {user.role}
+                        </Badge>
+                    </Group>
                     <Select
                         required
-                        label="User Role"
-                        placeholder="Select a role"
+                        label="Roles"
+                        description="Select a role to update..."
+                        placeholder="Role"
                         radius="md"
                         data={[
-                            { value: "admin", label: "Admin" },
-                            { value: "user", label: "User" },
-                            { value: "guest", label: "Guest" },
+                            { label: "Developer", value: "dev", disabled: true },
+                            { label: "Admin", value: "admin" },
+                            { label: "User", value: "user" },
+                            { label: "Guest", value: "guest" },
                         ]}
                         {...form.getInputProps("role")}
                     />
@@ -89,7 +99,7 @@ export default function EditUserModal({ opened, close, user }: { opened: boolean
                         gradient={{ from: "violet", to: "grape" }}
                         loading={updating}
                     >
-                        Update User
+                        Update User Role
                     </Button>
                 </Stack>
             </form>

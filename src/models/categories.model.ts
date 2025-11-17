@@ -16,6 +16,7 @@ export interface CategoryInsert {
     description?: string;
     image: string;
     recommended?: boolean;
+    status: "active" | "inactive";
 };
 
 export interface CategoryUpdate {

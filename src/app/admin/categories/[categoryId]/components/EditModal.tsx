@@ -1,13 +1,20 @@
 "use client";
 
-import { Button, Checkbox, Modal, NumberInput, Select, Stack, Textarea, TextInput } from "@mantine/core";
+import { Badge, Button, Chip, Group, Modal, NumberInput, Stack, Text, Textarea, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
 import { useState } from "react";
+import { IconCheck, IconFileDescription, IconList, IconPencil, IconPhoto, IconReceipt } from "@tabler/icons-react";
 
 import axios from "axios";
 
-export default function EditProductModal({ opened, close, product }: { opened: boolean, close: () => void, product: any }) { 
+interface EditProductModalProps {
+    opened: boolean;
+    close: () => void;
+    product: any;
+};
+
+export default function EditProductModal({ opened, close, product }: EditProductModalProps) { 
     const form = useForm({
         initialValues: {
             name: product.name,
@@ -57,7 +64,9 @@ export default function EditProductModal({ opened, close, product }: { opened: b
                 color: "green",
                 autoClose: 3000,
             });
-            window.location.reload();
+            setTimeout(() => {
+                window.location.reload();
+            }, 2000);
         } else {
             notifications.show({
                 message: response.data.message,
@@ -83,14 +92,18 @@ export default function EditProductModal({ opened, close, product }: { opened: b
                 <Stack>
                     <TextInput
                         required
+                        leftSection={<IconPencil size={16} stroke={1.5} />}
                         label="Product Name"
-                        placeholder="Update your product name"
+                        description="Update your product name"
+                        placeholder="Example Category..."
                         radius="md"
                         {...form.getInputProps("name")}
                     />
                     <Textarea
+                        leftSection={<IconFileDescription size={16} stroke={1.5} />}
                         label="Product Description"
-                        placeholder="Update your product description"
+                        description="Update your product description"
+                        placeholder="Category Description..."
                         radius="md"
                         autosize
                         minRows={6}
@@ -99,44 +112,62 @@ export default function EditProductModal({ opened, close, product }: { opened: b
                     />
                     <TextInput
                         required
+                        leftSection={<IconPhoto size={16} stroke={1.5} />}
                         label="Product Image"
-                        placeholder="Update your product image"
+                        description="Update your product image URL"
+                        placeholder="https://..."
                         radius="md"
                         {...form.getInputProps("image")}
                     />
                     <NumberInput
                         required
+                        leftSection={<IconReceipt size={16} stroke={1.5} />}
                         label="Product Price"
-                        placeholder="Update your product price"
+                        description="Update your product price"
+                        placeholder="5-5000"
+                        min={5}
+                        max={5000}
                         radius="md"
                         {...form.getInputProps("price")}
                     />
-                    <Checkbox
-                        label="Product Recommended"
-                        checked={form.values.recommended}
-                        radius="md"
-                        onChange={(event) => form.setFieldValue("recommended", event.currentTarget.checked)}
-                    />
+                    <Group justify="space-between">
+                        <Text fz="sm" fw={500}>
+                            Product Type
+                        </Text>
+                        <Badge variant="light">
+                            {product.stockType}
+                        </Badge>
+                    </Group>
                     <Textarea
-                        label="Product Stock Values"
-                        placeholder="Update your stock values"
-                        radius="md"
+                        leftSection={<IconList size={16} stroke={1.5} />}
+                        label="Product Values"
+                        description="Add your product stock values"
+                        placeholder="..."
                         autosize
                         minRows={6}
                         maxRows={6}
+                        radius="md"
                         {...form.getInputProps("stockValues")}
                     />
-                    <Select
-                        required
-                        label="Product Status"
-                        placeholder="Update your product status"
-                        radius="md"
-                        data={[
-                            { value: "active", label: "Active" },
-                            { value: "inactive", label: "Inactive" }
-                        ]}
-                        {...form.getInputProps("status")}
-                    />
+                    <Group>
+                        <Chip
+                            icon={<IconCheck size={16} stroke={1.5} />}
+                            variant="light"
+                            checked={form.values.recommended}
+                            onChange={() => form.setFieldValue("recommended", !form.values.recommended)}
+                        >
+                            Recommended
+                        </Chip>
+                        <Chip
+                            icon={<IconCheck size={16} stroke={1.5} />}
+                            color="green"
+                            variant="light"
+                            checked={form.values.status === "active"}
+                            onChange={() => form.setFieldValue("status", (form.values.status === "active") ? "inactive" : "active")}
+                        >
+                            Active
+                        </Chip>
+                    </Group>
                     <Button
                         type="submit"
                         radius="md"

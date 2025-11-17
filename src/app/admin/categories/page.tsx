@@ -1,14 +1,13 @@
 "use client";
 
 import { Button } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
 import { IconCategory } from "@tabler/icons-react";
 
 import Link from "next/link";
 import Categories from "./components/Categories";
 import CreateCategoryModal from "./components/CreateModal";
-import SectionHeader from "@/components/SectionHeader/SectionHeader";
-
-import { useDisclosure } from "@mantine/hooks";
+import SectionHeader from "@/components/HeaderSection/HeaderSection";
 
 export default function AdminCategoriesPage() {
 
