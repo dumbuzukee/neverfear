@@ -9,28 +9,11 @@ interface RegisterProps {
     email: string;
     username: string;
     password: string;
-    turnstileToken: string;
 };
 
 export async function POST(request: Request) {
     try {
-        const { email, username, password, turnstileToken }: RegisterProps = await request.json();
-
-        if (!turnstileToken) {
-            return Response.json({
-                ok: false,
-                message: "This 'turnstileToken' field is required",
-            });
-        };
-
-        const validatedTurnstile = await validateTurnstile(turnstileToken);
-
-        if (!validatedTurnstile.success) {
-            return Response.json({
-                ok: false,
-                message: validatedTurnstile.message,
-            });
-        };
+        const { email, username, password }: RegisterProps = await request.json();
 
         if (
             !email ||

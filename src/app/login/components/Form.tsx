@@ -13,7 +13,6 @@ export default function LoginForm() {
         initialValues: {
             username: "",
             password: "",
-            turnstileToken: "",
         },
         validate: {
             username: (value) => {
@@ -29,14 +28,13 @@ export default function LoginForm() {
     });
 
     const [loading, setLoading] = useState(false);
-    const [turnstileLoading, setTurnstileLoading] = useState(true);
+    // const [turnstileLoading, setTurnstileLoading] = useState(true);
 
     const handleLogin = form.onSubmit(
         async (values) => {
             const {
                 username,
                 password,
-                turnstileToken,
             } = values;
 
             setLoading(true);
@@ -45,7 +43,6 @@ export default function LoginForm() {
                 .post("/api/v1/users/login", {
                     username,
                     password,
-                    turnstileToken,
                 });
 
             if (response.data.ok) {
@@ -87,23 +84,14 @@ export default function LoginForm() {
                     radius="md"
                     {...form.getInputProps("password")}
                 />
-                <Turnstile
-                    siteKey={process.env.NEXT_PUBLIC_CLOUDFLARE_TURNSTILE_SITE_KEY!}
-                    onSuccess={(token) => {
-                        setTurnstileLoading(false);
-                        form.setFieldValue("turnstileToken", token);
-                    }}
-                    options={{ theme: "dark" }}
-                />
                 <Button
                     type="submit"
                     radius="md"
                     variant="gradient"
                     gradient={{ from: "violet", to: "grape" }}
                     loading={loading}
-                    disabled={turnstileLoading}
                 >
-                    {turnstileLoading ? "Waiting for verified cloudflare" : "Confirm Login"}
+                    Confirm Login
                 </Button>
             </Stack>
         </form>

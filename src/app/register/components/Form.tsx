@@ -15,7 +15,6 @@ export default function RegisterForm() {
             username: "",
             password: "",
             confirmPassword: "",
-            turnstileToken: "",
         },
         validate: {
             email: (value) => (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) && "Invalid email format"),
@@ -33,7 +32,7 @@ export default function RegisterForm() {
     });
 
     const [loading, setLoading] = useState(false);
-    const [turnstileLoading, setTurnstileLoading] = useState(true);
+    // const [turnstileLoading, setTurnstileLoading] = useState(true);
 
     const handleRegister = form.onSubmit(
         async (values) => {
@@ -41,7 +40,6 @@ export default function RegisterForm() {
                 email,
                 username,
                 password,
-                turnstileToken,
             } = values;
 
             setLoading(true);
@@ -51,7 +49,6 @@ export default function RegisterForm() {
                     email,
                     username,
                     password,
-                    turnstileToken,
                 });
 
             if (response.data.ok) {
@@ -107,23 +104,14 @@ export default function RegisterForm() {
                     radius="md"
                     {...form.getInputProps("confirmPassword")}
                 />
-                <Turnstile
-                    siteKey={process.env.NEXT_PUBLIC_CLOUDFLARE_TURNSTILE_SITE_KEY!}
-                    onSuccess={(token) => {
-                        setTurnstileLoading(false);
-                        form.setFieldValue("turnstileToken", token)
-                    }}
-                    options={{ theme: "dark" }}
-                />
                 <Button
                     type="submit"
                     radius="md"
                     variant="gradient"
                     gradient={{ from: "violet", to: "grape" }}
                     loading={loading}
-                    disabled={turnstileLoading}
                 >
-                    {turnstileLoading ? "Waiting for verified cloudflare" : "Confirm Register"}
+                    Confirm Register
                 </Button>
             </Stack>
         </form>

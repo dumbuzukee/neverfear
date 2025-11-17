@@ -13,8 +13,8 @@ export default function PurchaseModal({ opened, close, product }: { opened: bool
     const [quantity, setQuantity] = useState<number | string>("1");
     const [purchasing, setPurchasing] = useState(false);
     
-    const [turnstileToken, setTurnstileToken] = useState<string>("");
-    const [turnstileLoading, setTurnstileLoading] = useState(true);
+    // const [turnstileToken, setTurnstileToken] = useState<string>("");
+    // const [turnstileLoading, setTurnstileLoading] = useState(true);
 
     const handlePurchaseItem = async () => {
         setPurchasing(true);
@@ -22,7 +22,6 @@ export default function PurchaseModal({ opened, close, product }: { opened: bool
         const response = await axios
             .post(`/api/v1/users/purchaseItem/${product._id}`, {
                 quantity,
-                turnstileToken,
             });
 
         if (response.data.ok) {
@@ -80,21 +79,12 @@ export default function PurchaseModal({ opened, close, product }: { opened: bool
                         {product.price * Number(quantity || 1)}
                     </Text>
                 </Group>
-                <Turnstile
-                    siteKey={process.env.NEXT_PUBLIC_CLOUDFLARE_TURNSTILE_SITE_KEY!}
-                    onSuccess={(token) => {
-                        setTurnstileLoading(false);
-                        setTurnstileToken(token);
-                    }}
-                    options={{ theme: "dark" }}
-                />
                 <Button
                     radius="md"
                     variant="gradient"
                     gradient={{ from: "violet", to: "grape" }}
                     onClick={handlePurchaseItem}
                     loading={purchasing}
-                    disabled={turnstileLoading}
                 >
                     Confirm Purchase
                 </Button>

@@ -10,7 +10,6 @@ interface ParamsProps {
 
 interface PurchaseItemProps {
     quantity: number;
-    turnstileToken: string;
 };
 
 export async function POST(
@@ -29,24 +28,8 @@ export async function POST(
             });
         };
 
-        const { quantity, turnstileToken }: PurchaseItemProps = await request.json();
+        const { quantity }: PurchaseItemProps = await request.json();
         const { productId } = await params;
-
-        if (!turnstileToken) {
-            return Response.json({
-                ok: false,
-                message: "This 'turnstileToken' field is required",
-            });
-        };
-
-        const validatedTurnstile = await validateTurnstile(turnstileToken);
-
-        if (!validatedTurnstile.success) {
-            return Response.json({
-                ok: false,
-                message: validatedTurnstile.message,
-            });
-        };
 
         if (!quantity) {
             return Response.json({
