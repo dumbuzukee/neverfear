@@ -66,7 +66,6 @@ export default function RegisterForm() {
                     color: "red",
                     autoClose: 3000,
                 });
-                window.turnstile?.reset();
             };
 
             setLoading(false);
