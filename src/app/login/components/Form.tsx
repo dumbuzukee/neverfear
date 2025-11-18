@@ -60,7 +60,6 @@ export default function LoginForm() {
                     color: "red",
                     autoClose: 3000,
                 });
-                window.turnstile?.reset();
             };
 
             setLoading(false);
